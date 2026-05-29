@@ -1,0 +1,6 @@
+.git
+.gitignore
+node_modules
+wp-content/uploads
+wp-content/cache
+wp-content/wflogs

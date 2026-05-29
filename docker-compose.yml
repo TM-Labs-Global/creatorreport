@@ -1,0 +1,53 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: getly-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    networks:
+      - trafficgascompany
+
+  wordpress:
+    image: wordpress:php8.2-apache
+    container_name: trafficgascompany
+    restart: unless-stopped
+    ports:
+      - "${WORDPRESS_PORT:-10010}:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      trafficgascompany:
+      getly-network:
+        aliases:
+          - trafficgascompany
+
+volumes:
+  db_data:
+  wordpress_data:
+
+networks:
+  trafficgascompany:
+    name: trafficgascompany
+  getly-network:
+    external: true
