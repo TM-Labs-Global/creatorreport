@@ -21,7 +21,7 @@ services:
       - trafficgascompany
 
   wordpress:
-    image: wordpress:php8.2-apache
+    build: .
     container_name: trafficgascompany
     restart: unless-stopped
     ports:

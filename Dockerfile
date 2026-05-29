@@ -1,12 +1,7 @@
-ARG BASE_IMAGE=php:8.2-apache
-FROM ${BASE_IMAGE}
+FROM wordpress:php8.2-apache
 
-RUN docker-php-ext-install mysqli
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-RUN a2enmod rewrite
-
-WORKDIR /var/www/html
-
-RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
-
-EXPOSE 80
+RUN echo "upload_max_filesize = 512M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 512M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini
