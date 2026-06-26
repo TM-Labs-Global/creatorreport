@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8.0
-    container_name: trafficgascompany-db
+    container_name: creatorreport-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -18,11 +18,11 @@ services:
       retries: 30
       start_period: 120s
     networks:
-      - trafficgascompany
+      - creatorreport
 
   wordpress:
     build: .
-    container_name: trafficgascompany
+    container_name: creatorreport
     restart: unless-stopped
     ports:
       - "${WORDPRESS_PORT}:80"
@@ -37,17 +37,17 @@ services:
       db:
         condition: service_healthy
     networks:
-      trafficgascompany:
+      creatorreport:
       getly-network:
         aliases:
-          - trafficgascompany
+          - creatorreport
 
 volumes:
   db_data:
   wordpress_data:
 
 networks:
-  trafficgascompany:
-    name: trafficgascompany
+  creatorreport:
+    name: creatorreport
   getly-network:
     external: true
